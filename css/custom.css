@@ -305,15 +305,6 @@
     -o-transform: scale(0.5);
 }
 
-/*外挂标签阿里图标引入*/
-svg.icon {
-    width: 1.28em;
-    height: 1.28em;
-    vertical-align: -0.15em;
-    fill: currentColor;
-    overflow: hidden;
-}
-
 /*页面样式调节*/
 /* 首页文章卡片 */
 #recent-posts > .recent-post-item {
@@ -386,3 +377,20 @@ div#archive {
     background: rgba(25, 25, 25, 0.9) !important;
     color: #ffffff;
 }
+/*ali矢量库导航栏图标*/
+svg.menu_icon {
+    width: 1.28em;
+    height: 1.28em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+}
+/*社交图标*/
+svg.social_icon {
+    width: 1.20em;
+    height: 1.20em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+}
+
