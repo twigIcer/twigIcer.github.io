@@ -1,0 +1,474 @@
+<!-- - var pageType = is_post() ? 'post' : 'page'--><!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>如何解决Twikoo跨域问题 | twigicer's blog</title><meta name="author" content="twigicer"><meta name="copyright" content="twigicer"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="注意：解决这个问题只需要去twikoo的管理界面，将跨域配置修改为自己的域名即可，我是最开始填错了，导致废了这么大功夫。。。顺便水了一篇文章。  前面写了一篇跨域问题的解决方案的文章，那篇文章是看了鱼皮老哥视频总结的理论，但是没有实践过，刚好我的博客接入Twikoo评论系统时出现了跨域问题，这几天想着去解决一下这个问题，过程比较艰辛，记录一下。 问题描述：本博客使用的是hexo的butterfl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何解决Twikoo跨域问题">
+<meta property="og:url" content="https://www.xiaoshuzhi.love/2024/02/16/study-11/index.html">
+<meta property="og:site_name" content="twigicer&#39;s blog">
+<meta property="og:description" content="注意：解决这个问题只需要去twikoo的管理界面，将跨域配置修改为自己的域名即可，我是最开始填错了，导致废了这么大功夫。。。顺便水了一篇文章。  前面写了一篇跨域问题的解决方案的文章，那篇文章是看了鱼皮老哥视频总结的理论，但是没有实践过，刚好我的博客接入Twikoo评论系统时出现了跨域问题，这几天想着去解决一下这个问题，过程比较艰辛，记录一下。 问题描述：本博客使用的是hexo的butterfl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p22.jpg">
+<meta property="article:published_time" content="2024-02-16T09:22:10.117Z">
+<meta property="article:modified_time" content="2024-02-16T09:24:06.795Z">
+<meta property="article:author" content="twigicer">
+<meta property="article:tag" content="twigIcer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p22.jpg"><link rel="shortcut icon" href="https://imgbed.xiaoshuzhi.xyz/imgs/system/logo.png"><link rel="canonical" href="https://www.xiaoshuzhi.love/2024/02/16/study-11/index.html"><link rel="preconnect" href="//cdnjs.cloudflare.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css?v=4.12.0"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.32/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":5,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":230},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体中文","cht_to_chs":"你已切换为简体中文","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-right"},
+  infinitegrid: {
+    js: 'https://cdnjs.cloudflare.com/ajax/libs/egjs-infinitegrid/4.11.0/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '如何解决Twikoo跨域问题',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-16 17:24:06'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const now = new Date()
+          const hour = now.getHours()
+          const isNight = hour <= 8 || hour >= 22
+          if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="/css/universe.css"><script src="https://npm.elemecdn.com/echarts@4.9.0/dist/echarts.min.js"></script><link rel="stylesheet" href="/css/cat.css"><link rel="stylesheet" href="/css/readPercent.css"><link rel="stylesheet" href="/css/emoji.css"><span id="fps"></span><div id="myscoll"></div><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-categories-card@1.0.0/lib/categorybar.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-footer-beautify@1.0.0/lib/runtime.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiperstyle.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><!--if theme.preloader.source === 1--><!--  include ./fullpage-loading.pug--><!--else--><!--  include ./pace.pug--><!--if theme.preloader.source === 1--><!--  include ./fullpage-loading.pug--><!--else if theme.preloader.source === 2--><!--  include ./pace.pug--><!--else--><!--  include ./fullpage-loading.pug--><!--  include ./pace.pug--><!--#loading-box--><!--  .loading-left-bg--><!--  .loading-right-bg--><!--  .spinner-box--><!--    .configure-border-1--><!--      .configure-core--><!--    .configure-border-2--><!--      .configure-core--><!--    .loading-word= _p('loading')--><!----><!--script.--><!--  (()=>{--><!--    const $loadingBox = document.getElementById('loading-box')--><!--    const $body = document.body--><!--    const preloader = {--><!--      endLoading: () => {--><!--        $body.style.overflow = ''--><!--        $loadingBox.classList.add('loaded')--><!--      },--><!--      initLoading: () => {--><!--        $body.style.overflow = 'hidden'--><!--        $loadingBox.classList.remove('loaded')--><!--      }--><!--    }--><!----><!--    preloader.initLoading()--><!--    window.addEventListener('load',() => { preloader.endLoading() })--><!----><!--    if (!{theme.pjax && theme.pjax.enable}) {--><!--      document.addEventListener('pjax:send', () => { preloader.initLoading() })--><!--      document.addEventListener('pjax:complete', () => { preloader.endLoading() })--><!--    }--><!--  })()--><!--#loading-box(onclick='document.getElementById("loading-box").classList.add("loaded")')--><!--  .loading-bg--><!--    div.loading-img--><!--    .loading-image-dot--><!----><!--script.--><!--  const preloader = {--><!--    endLoading: () => {--><!--      document.body.style.overflow = 'auto';--><!--      document.getElementById('loading-box').classList.add("loaded")--><!--    },--><!--    initLoading: () => {--><!--      document.body.style.overflow = '';--><!--      document.getElementById('loading-box').classList.remove("loaded")--><!----><!--    }--><!--  }--><!--  window.addEventListener('load',()=> { preloader.endLoading() })--><!----><!--  if (!{theme.pjax && theme.pjax.enable}) {--><!--    document.addEventListener('pjax:send', () => { preloader.initLoading() })--><!--    document.addEventListener('pjax:complete', () => { preloader.endLoading() })--><!--  }--><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/system/logo.png"/><div class="loading-image-dot"></div><div id="loading-percentage">0%</div></div></div><script>const loadingPercentage = document.getElementById("loading-percentage");
+loadingPercentage.style.color = "black";
+let loadingPercentageTimer = setInterval(function() {
+  var progressBar = document.querySelector(".pace-progress");
+  if (!progressBar) return
+  var currentValue = progressBar.getAttribute("data-progress-text");
+  if (currentValue !== loadingPercentage.textContent) {
+    loadingPercentage.textContent = currentValue;
+    if (currentValue === "100%") {
+      clearInterval(loadingPercentageTimer);
+    }
+  }
+}, 100);
+const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+document.addEventListener('pjax:send', () => {
+  Pace.restart()
+})
+</script><link rel="stylesheet" href="/css/progress_bar.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/avatars/p5.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr class="custom-hr"/><!--if theme.menu--><!--  .menus_items--><!--    each value, label in theme.menu--><!--      if typeof value !== 'object'--><!--        .menus_item--><!--          - const valueArray = value.split('||')--><!--          a.site-page(href=url_for(trim(valueArray[0])))--><!--            if valueArray[1]--><!--              i.fa-fw(class=trim(valueArray[1]))--><!--            span=' '+label--><!--      else--><!--        .menus_item--><!--          - const labelArray = label.split('||')--><!--          - const hideClass = labelArray[2] && trim(labelArray[2]) === 'hide' ? 'hide' : ''--><!--          a.site-page.group(class=`${hideClass}` href='javascript:void(0);')--><!--            if labelArray[1]--><!--              i.fa-fw(class=trim(labelArray[1]))--><!--            span=' '+ trim(labelArray[0])--><!--            i.fas.fa-chevron-down--><!--          ul.menus_item_child--><!--            each val,lab in value--><!--              - const valArray = val.split('||')--><!--              li--><!--                a.site-page.child(href=url_for(trim(valArray[0])))--><!--                  if valArray[1]--><!--                    i.fa-fw(class=trim(valArray[1]))--><!--                  span=' '+ lab--><div class="menus_items"><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-HOME"></use></svg><span class="menu_word" style="font-size:17px"> 首页</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/archives/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-guidang"></use></svg><span class="menu_word" style="font-size:17px"> 归档</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/tags/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-tags"></use></svg><span class="menu_word" style="font-size:17px"> 标签</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/categories/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-fenlei"></use></svg><span class="menu_word" style="font-size:17px"> 分类</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/comments/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-a-zu335"></use></svg><span class="menu_word" style="font-size:17px"> 留言板</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/link/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-link"></use></svg><span class="menu_word" style="font-size:17px"> 友链</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/about/"><svg class="menu_icon faa-data" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-nb-"></use></svg><span class="menu_word" style="font-size:17px"> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://imgbed.xiaoshuzhi.xyz/imgs/cover/p22.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="twigicer's blog"><img class="site-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/system/logo.png"/><span class="site-name">twigicer's blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><!--span=' '+_p('search.title')--></a></div><!--if theme.menu--><!--  .menus_items--><!--    each value, label in theme.menu--><!--      if typeof value !== 'object'--><!--        .menus_item--><!--          - const valueArray = value.split('||')--><!--          a.site-page(href=url_for(trim(valueArray[0])))--><!--            if valueArray[1]--><!--              i.fa-fw(class=trim(valueArray[1]))--><!--            span=' '+label--><!--      else--><!--        .menus_item--><!--          - const labelArray = label.split('||')--><!--          - const hideClass = labelArray[2] && trim(labelArray[2]) === 'hide' ? 'hide' : ''--><!--          a.site-page.group(class=`${hideClass}` href='javascript:void(0);')--><!--            if labelArray[1]--><!--              i.fa-fw(class=trim(labelArray[1]))--><!--            span=' '+ trim(labelArray[0])--><!--            i.fas.fa-chevron-down--><!--          ul.menus_item_child--><!--            each val,lab in value--><!--              - const valArray = val.split('||')--><!--              li--><!--                a.site-page.child(href=url_for(trim(valArray[0])))--><!--                  if valArray[1]--><!--                    i.fa-fw(class=trim(valArray[1]))--><!--                  span=' '+ lab--><div class="menus_items"><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-HOME"></use></svg><span class="menu_word" style="font-size:17px"> 首页</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/archives/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-guidang"></use></svg><span class="menu_word" style="font-size:17px"> 归档</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/tags/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-tags"></use></svg><span class="menu_word" style="font-size:17px"> 标签</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/categories/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-fenlei"></use></svg><span class="menu_word" style="font-size:17px"> 分类</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/comments/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-a-zu335"></use></svg><span class="menu_word" style="font-size:17px"> 留言板</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/link/"><svg class="menu_icon faa-tada" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-link"></use></svg><span class="menu_word" style="font-size:17px"> 友链</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/about/"><svg class="menu_icon faa-data" aria-hidden="true" style="width:1.30em;height:1.30em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-nb-"></use></svg><span class="menu_word" style="font-size:17px"> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">如何解决Twikoo跨域问题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-16T09:22:10.117Z" title="发表于 2024-02-16 17:22:10">2024-02-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-16T09:24:06.795Z" title="更新于 2024-02-16 17:24:06">2024-02-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2135</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="如何解决Twikoo跨域问题"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>注意：解决这个问题只需要去twikoo的管理界面，将跨域配置修改为自己的域名即可，我是最开始填错了，导致废了这么大功夫。。。顺便水了一篇文章。</p>
+</blockquote>
+<p>前面写了一篇跨域问题的解决方案的文章，那篇文章是看了鱼皮老哥视频总结的理论，但是没有实践过，刚好我的博客接入Twikoo评论系统时出现了跨域问题，这几天想着去解决一下这个问题，过程比较艰辛，记录一下。</p>
+<h2 id="问题描述："><a href="#问题描述：" class="headerlink" title="问题描述："></a>问题描述：</h2><p>本博客使用的是hexo的butterfly主题，github + Vercel托管，绑定了自定义域名。Twikoo系统使用 Vercel 云函数部署了并绑定了自定义域名。博客在接入Twikoo系统后，本地测试没有问题，可以正常发送评论并推送到邮箱，但是将博客推送上线后，再使用评论时，就会出现跨域问题：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access to XMLHttpRequest at <span class="string">&#x27;twikoo自定义域名&#x27;</span> from origin <span class="string">&#x27;我的博客域名&#x27;</span> has been blocked by CORS policy: Response to preflight request doesn<span class="string">&#x27;t pass access control check: No &#x27;</span>Access-Control-Allow-Origin<span class="string">&#x27; header is present on the requested resource.</span></span><br></pre></td></tr></table></figure>
+<h2 id="错误方案："><a href="#错误方案：" class="headerlink" title="错误方案："></a>错误方案：</h2><h3 id="修改请求头："><a href="#修改请求头：" class="headerlink" title="修改请求头："></a>修改请求头：</h3><blockquote>
+<p>注意：解决跨域问题，需要在响应头中加入”Access-Control-Allow-Origin”:”*”，而不是请求头！！！</p>
+<p>缤纷云：<a target="_blank" rel="noopener" href="https://console.bitiful.com/buckets">Bitiful</a></p>
+</blockquote>
+<p>因为之前对跨域问题的解决方案理解不够深入，认为解决跨域问题可以在请求头中加入<code>&quot;Access-Control-Allow-Origin&quot;:&quot;*&quot;</code>即可。</p>
+<p>费了点力气去寻找到了Twikoo的main.js文件，然后下载下来，本地修改加入了<code>&quot;Access-Control-Allow-Origin&quot;:&quot;*&quot;</code>请求头：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216141817060.png" alt="image-20240216141817060"></p>
+<p>然后将这个js文件上传到缤纷云上，再调用这个js文件，结果发现，请求头中是带上了”Access-Control-Allow-Origin”:”*”，但是还是报跨域的错。</p>
+<p>我又去找了文章，发现解决跨域是需要响应头带上Access-Control-Allow-Origin而不是请求头，我也意识到上篇文章写的有点问题，去修改了。</p>
+<h2 id="可能有用的方案："><a href="#可能有用的方案：" class="headerlink" title="可能有用的方案："></a>可能有用的方案：</h2><h3 id="1-使用代理服务器发送请求："><a href="#1-使用代理服务器发送请求：" class="headerlink" title="1. 使用代理服务器发送请求："></a>1. 使用代理服务器发送请求：</h3><p>我就想能不能再发请求的时候带上代理，进行请求转发，于是我去问了ChatGPT，ChatGPT的回答如下：</p>
+<blockquote>
+<p>如果你没有自己的代理服务器，也可以考虑使用一些在线的跨域请求代理服务来解决跨域问题。这些服务将充当中间人，将请求发送到目标服务器并将响应返回给你的应用程序。</p>
+<p>以下是一些常用的在线跨域请求代理服务：</p>
+<ol>
+<li>CORS Anywhere：<a target="_blank" rel="noopener" href="https://cors-anywhere.herokuapp.com/">https://cors-anywhere.herokuapp.com/</a></li>
+<li>Ycors：<a target="_blank" rel="noopener" href="https://ycors.com/">https://ycors.com/</a></li>
+<li>AnyProxy：<a target="_blank" rel="noopener" href="https://anyproxy.io/">https://anyproxy.io/</a></li>
+<li>CORS Proxy：<a target="_blank" rel="noopener" href="https://cors-proxy.htmldriven.com/">https://cors-proxy.htmldriven.com/</a></li>
+</ol>
+<p>你可以将你的目标服务器URL放在这些代理服务的URL前面，将请求发送到代理服务，代理服务再将请求发送到目标服务器，并将目标服务器的响应返回给你的应用程序。请注意，这些代理服务可能有使用限制或存活时间限制，所以请查阅相关文档以了解更多详情。</p>
+<p>下面是一段示例代码，展示如何在你的代码中使用 CORS Anywhere 代理解决跨域问题：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">try</span> &#123;</span><br><span class="line"> <span class="keyword">var</span> i = <span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(<span class="string">&quot;twikoo-access-token&quot;</span>);</span><br><span class="line"> <span class="keyword">var</span> o = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line"> o.<span class="property">onreadystatechange</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">   <span class="keyword">if</span> (<span class="number">4</span> === o.<span class="property">readyState</span>) &#123;</span><br><span class="line">     <span class="keyword">if</span> (<span class="number">200</span> === o.<span class="property">status</span>) &#123;</span><br><span class="line">       <span class="keyword">var</span> n = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(o.<span class="property">responseText</span>);</span><br><span class="line">       n.<span class="property">accessToken</span> &amp;&amp; <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&quot;twikoo-access-token&quot;</span>, n.<span class="property">accessToken</span>);</span><br><span class="line">       <span class="title function_">e</span>(&#123; <span class="attr">result</span>: n &#125;);</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       <span class="title function_">t</span>(o.<span class="property">status</span>);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// 使用 CORS Anywhere 代理发送请求</span></span><br><span class="line"> <span class="keyword">var</span> proxyUrl = <span class="string">&#x27;https://cors-anywhere.herokuapp.com/&#x27;</span> + a;</span><br><span class="line"> o.<span class="title function_">open</span>(<span class="string">&quot;POST&quot;</span>, proxyUrl);</span><br><span class="line"> o.<span class="title function_">setRequestHeader</span>(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line"> o.<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(<span class="title function_">c</span>(&#123; <span class="attr">event</span>: n, <span class="attr">accessToken</span>: i &#125;, r)));</span><br><span class="line">&gt;&#125; <span class="keyword">catch</span> (s) &#123;</span><br><span class="line"> <span class="title function_">t</span>(s);</span><br><span class="line">&gt;&#125;</span><br></pre></td></tr></table></figure>
+<p>请注意，这些在线代理服务可能会限制访问频率或提供有限的并发连接数。如果你的应用程序需要持续高频率地使用跨域请求，最好考虑搭建自己的代理服务器来更好地控制和管理跨域请求。</p>
+</blockquote>
+<p>然后我就照着替换了这段代码，然后重新上传到缤纷云，但是好像代理并没有起作用，请求还是和原来一样。</p>
+<p>我觉得这个方案是可行的，但是可能由于我的配置不太对，所以代理没有起作用。如果有佬了解这一块可以补充。</p>
+<h3 id="2-使用CDN，添加跨域配置："><a href="#2-使用CDN，添加跨域配置：" class="headerlink" title="2. 使用CDN，添加跨域配置："></a>2. 使用CDN，添加跨域配置：</h3><blockquote>
+<p>国内大部分CDN都需要加速域名备案，因为我没有服务器，所以Twikoo的域名备不了案，如果有可以加速未备案的域名的CDN可以推荐一下。</p>
+<p>这个方法本人并没有尝试成功，我觉得可能是CDN的问题，感兴趣的朋友可以换别的CDN试试。</p>
+<p>缤纷云：<a target="_blank" rel="noopener" href="https://console.bitiful.com/buckets">Bitiful</a></p>
+</blockquote>
+<p>这个方案是我之前在某个帖子中看到的，刚好看见缤纷云出了CDN加速功能，就想着去试试。</p>
+<h4 id="操作步骤："><a href="#操作步骤：" class="headerlink" title="操作步骤："></a>操作步骤：</h4><p>首先，将Vercel里绑定的自定义域名去掉，然后在缤纷云的CDN处添加新域名和回源地址和回源HOST（就是Vercel提供的原始域名）：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216151222217.png" alt="image-20240216151222217"></p>
+<p>然后点击设置-访问控制-跨域访问配置-开启，配置博客网站ip或域名：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216151408012.png" alt="image-20240216151408012"></p>
+<p>等待部署完成即可。</p>
+<p>到这一步跨域问题已经解决。</p>
+<h4 id="其他问题1：域名未配置证书，访问时被安全拦截"><a href="#其他问题1：域名未配置证书，访问时被安全拦截" class="headerlink" title="其他问题1：域名未配置证书，访问时被安全拦截"></a>其他问题1：域名未配置证书，访问时被安全拦截</h4><blockquote>
+<p>twikoo.xiaoshuzhi.love这个域名的SSL已经配置，忘记截图了，所以用valine.xiaoshuzhi.love来演示。</p>
+</blockquote>
+<p>正常到上面这一步应该已经完成了，但是由于我的域名SSL证书失效了，所以会导致访问域名时被浏览器安全拦截：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216161726926.png" alt="image-20240216161726926"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216152054516.png" alt="image-20240216152054516"></p>
+<p>这时需要去申请SSL证书，腾讯云可以免费申请1年的SSL证书，然后下载，并且在缤纷云里配置：</p>
+<p>设置-Https配置-开启-更换证书-填写证书内容-选择强制跳转-保存，等待部署完成即可。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216152529958.png" alt="image-20240216152529958"></p>
+<h4 id="其他问题2：502-bad-Gateway：could-not-connect-to-the-origin-server"><a href="#其他问题2：502-bad-Gateway：could-not-connect-to-the-origin-server" class="headerlink" title="其他问题2：502 bad Gateway：could not connect to the origin server."></a>其他问题2：502 bad Gateway：could not connect to the origin server.</h4><p>这个问题，我在网上搜，答案是Ctrl + F5 刷新就可以解决，但是我试了还是报502，这个问题我怀疑是CDN的问题，后面再去探索。</p>
+<h2 id="终极解决方案："><a href="#终极解决方案：" class="headerlink" title="终极解决方案："></a>终极解决方案：</h2><h3 id="1-twikoo系统有跨域配置："><a href="#1-twikoo系统有跨域配置：" class="headerlink" title="1. twikoo系统有跨域配置："></a>1. twikoo系统有跨域配置：</h3><p>原谅我没有仔细看配置，自己废了这么多力气，原因是最早之前把这个配置填错了，进入Twikoo管理界面-通用，将这个配置填成自己的域名。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216170951915.png" alt="image-20240216170951915"></p>
+<h3 id="2-更换其他评论系统，比如来必力评论系统："><a href="#2-更换其他评论系统，比如来必力评论系统：" class="headerlink" title="2. 更换其他评论系统，比如来必力评论系统："></a>2. 更换其他评论系统，比如来必力评论系统：</h3><blockquote>
+<p>我在用来必力评论系统之前尝试了Valine评论系统，这个系统也还不错，但是和Twikoo一样，会存在跨域问题，所以选择了来必力。</p>
+<p>Valine国内版好像没有跨域问题，但是需要备案的域名绑定，国际版自定义域名有跨域问题，后面再研究研究。</p>
+</blockquote>
+<p>上面两个方案都是我认为可能有用的方案，但是我尝试时，多少有点问题，所以我暂时妥协了，更换了来必力评论系统，缺点是：必须登录才能评论，界面不好看。优点就一个：使用简单！</p>
+<h3 id="接入来必力评论系统步骤："><a href="#接入来必力评论系统步骤：" class="headerlink" title="接入来必力评论系统步骤："></a>接入来必力评论系统步骤：</h3><p>官网：<a target="_blank" rel="noopener" href="https://www.livere.com/">欢迎来到来必力 (livere.com)</a></p>
+<p>韩国的系统，可以用翻译软件翻译为中文。</p>
+<p>注册登录 - 安装 - 选择City版（免费）- 输入网站信息 ，然后会生成代码，复制 UID：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216163855959.png" alt="image-20240216163855959"></p>
+<p>在_config.butterfly.yml文件中选择Livere评论系统：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216164006928.png" alt="image-20240216164006928"></p>
+<p>在Livere配置下配置UID即可，非常简单：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216164158352.png" alt="image-20240216164158352"></p>
+<p>使用起来也没有问题。</p>
+<h2 id="最后："><a href="#最后：" class="headerlink" title="最后："></a>最后：</h2><p>其实关于Twikoo跨域问题，我找了很多资料，都没有提出解决方案的，在官方Github：<a target="_blank" rel="noopener" href="https://github.com/twikoojs/twikoo/issues/407">hexo+butterfly 引入 twikoo 后显示访问跨域 · Issue #407 · twikoojs/twikoo (github.com)</a>里有类似的提问，但是好像没找到相关的回答，这篇文章算是一些思路尝试吧。</p>
+<h2 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h2><p>我是傻子，Twikoo有跨域配置，这个问题完全是因为我最开始将跨域配置填错导致的，官方github上有回答，是我没看见，现在文章内容已经更改。</p>
+<p>不过，这次经历确实让我对跨域问题有了更深的理解，也让我明白细心的宝贵！！还有就是有问题可以去官方github上找找答案！</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240216171822825.png" alt="image-20240216171822825"></p>
+</article><!--if theme.post_copyright.enable && page.copyright !== false--><!--  - let author = page.copyright_author || config.author--><!--  - let authorHref = page.copyright_author_href || theme.post_copyright.author_href || config.url--><!--  - let url = page.copyright_url || page.permalink--><!--  - let info = page.copyright_info || _p('post.copyright.copyright_content', theme.post_copyright.license_url, theme.post_copyright.license, config.url, config.title)--><!--  .post-copyright--><!--    .post-copyright__author--><!--      span.post-copyright-meta--><!--        i.fas.fa-circle-user.fa-fw--><!--        = _p('post.copyright.author') + ": "--><!--      span.post-copyright-info--><!--        a(href=authorHref)=author--><!--    .post-copyright__type--><!--      span.post-copyright-meta--><!--        i.fas.fa-square-arrow-up-right.fa-fw--><!--        = _p('post.copyright.link') + ": "--><!--      span.post-copyright-info--><!--        a(href=url_for(url))= theme.post_copyright.decode ? decodeURI(url) : url--><!--    .post-copyright__notice--><!--      span.post-copyright-meta--><!--        i.fas.fa-circle-exclamation.fa-fw--><!--        = _p('post.copyright.copyright_notice') + ": "--><!--      span.post-copyright-info!= info--><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>如何解决Twikoo跨域问题</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.xiaoshuzhi.love/2024/02/16/study-11/">https://www.xiaoshuzhi.love/2024/02/16/study-11/</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a"><h>作者</h><div class="post-copyright-cc-info"><h>twigicer</h></div></div><div class="post-copyright-c"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-02-16</h></div></div><div class="post-copyright-u"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-02-16</h></div></div><div class="post-copyright-c"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p22.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/01/31/study-8/" title="如何给自己的API提供SDK"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p16.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">如何给自己的API提供SDK</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><!--.is-center--><div class="author_top is-center"><!--.avatar-img//  img(src=url_for(theme.avatar.img) onerror=`this.onerror=null;this.src='` + url_for(theme.error_img.flink) + `'` alt="avatar")--><div class="card-info-avatar"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/avatars/p5.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-status-box"><div class="author-status"><g-emoji class="g-emoji" alias="palm_tree" fallback-src="https://lskypro.acozycotage.net/LightPicture/2022/12/fe1dc0402e623096.jpg">🐟</g-emoji><span>认真摸鱼中</span></div></div></div><div class="author-info__name">twigicer</div><div class="author-info__description">爱上小树枝</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/twigIcer"><i></i><span>my-github</span><i class="faa-passing animated" style="padding-left:20px;display:inline-block;vertical-align:middle;"><svg class="icon" style="height:28px;width:28px;fill:currentColor;position:relative;top:5px"><use xlink:href="#icon-xiaoqiche"></use></svg></i></a><div class="card-info-social-icons is-center"><!-- each url, icon in theme.social--><!--   a.social-icon(href=url_for(trim(url.split('||')[0])) target="_blank"--><!--   title=url.split('||')[1] === undefined ? '' : trim(url.split('||')[1]))--><!--     i(class=icon style=url.split('||')[2] === undefined ? '' : `color: ${trim(url.split('||')[2]).replace(/[\'\"]/g, '')};`)--><a class="social-icon faa-parent animated-hover" href="https://github.com/twigIcer" target="_blank" title="github"><svg class="social_icon faa-tada" aria-hidden="true" style="width:1.15em;height:1.15em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-github"></use></svg></a><a class="social-icon faa-parent animated-hover" href="https://imgbed.xiaoshuzhi.xyz/imgs/system/wx.jpg" target="_blank" title="微信"><svg class="social_icon faa-tada" aria-hidden="true" style="width:1.15em;height:1.15em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-weixin"></use></svg></a><a class="social-icon faa-parent animated-hover" href="https://res.abeim.cn/api/qq/?qq=2990129064" target="_blank" title="QQ"><svg class="social_icon faa-tada" aria-hidden="true" style="width:1.15em;height:1.15em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-QQ"></use></svg></a><a class="social-icon faa-parent animated-hover" href="mailto:abin0926@qq.com" target="_blank" title="QQ邮箱"><svg class="social_icon faa-tada" aria-hidden="true" style="width:1.15em;height:1.15em;vertical-align:-0.15em;fill:currentColor;overflow:hidden;"><use xlink:href="#icon-youxiang"></use></svg></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><!--i.fas.fa-bullhorn.fa-shake--><a class="faa-parent animated-hover"><svg class="faa-tada icon" style="height:25px;width:25px;fill:currentColor;position:relative;top:5px" aria-hidden="true"><use xlink:href="#icon-tongzhigonggao"></use></svg></a><span>公告栏</span></div><div class="announcement_content"></div><div id="welcome-info"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%EF%BC%9A"><span class="toc-text">问题描述：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E6%96%B9%E6%A1%88%EF%BC%9A"><span class="toc-text">错误方案：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E8%AF%B7%E6%B1%82%E5%A4%B4%EF%BC%9A"><span class="toc-text">修改请求头：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E8%83%BD%E6%9C%89%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%EF%BC%9A"><span class="toc-text">可能有用的方案：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82%EF%BC%9A"><span class="toc-text">1. 使用代理服务器发送请求：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8CDN%EF%BC%8C%E6%B7%BB%E5%8A%A0%E8%B7%A8%E5%9F%9F%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="toc-text">2. 使用CDN，添加跨域配置：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-text">操作步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%981%EF%BC%9A%E5%9F%9F%E5%90%8D%E6%9C%AA%E9%85%8D%E7%BD%AE%E8%AF%81%E4%B9%A6%EF%BC%8C%E8%AE%BF%E9%97%AE%E6%97%B6%E8%A2%AB%E5%AE%89%E5%85%A8%E6%8B%A6%E6%88%AA"><span class="toc-text">其他问题1：域名未配置证书，访问时被安全拦截</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%982%EF%BC%9A502-bad-Gateway%EF%BC%9Acould-not-connect-to-the-origin-server"><span class="toc-text">其他问题2：502 bad Gateway：could not connect to the origin server.</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%88%E6%9E%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A"><span class="toc-text">终极解决方案：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-twikoo%E7%B3%BB%E7%BB%9F%E6%9C%89%E8%B7%A8%E5%9F%9F%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="toc-text">1. twikoo系统有跨域配置：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9B%B4%E6%8D%A2%E5%85%B6%E4%BB%96%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F%EF%BC%8C%E6%AF%94%E5%A6%82%E6%9D%A5%E5%BF%85%E5%8A%9B%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F%EF%BC%9A"><span class="toc-text">2. 更换其他评论系统，比如来必力评论系统：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5%E6%9D%A5%E5%BF%85%E5%8A%9B%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-text">接入来必力评论系统步骤：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%EF%BC%9A"><span class="toc-text">最后：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A"><span class="toc-text">补充：</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By twigicer</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i><span id="percent">0<span>%</span></span></button></div></div><div><script src="/js/utils.js?v=4.12.0"></script><script src="/js/main.js?v=4.12.0"></script><script src="/js/tw_cn.js?v=4.12.0"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.32/fancybox/fancybox.umd.min.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/instant.page/5.1.0/instantpage.min.js" type="module"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/vanilla-lazyload/17.3.1/lazyload.iife.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>(() => {
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.xiaoshuzhi.xyz/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://twig-twikoo.s3.bitiful.net/main.js').then(init)
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.xiaoshuzhi.xyz/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  if ('Twikoo' === 'Twikoo' || !true) {
+    if (true) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else {
+      loadTwikoo()
+      
+    }
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script src="https://cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script><script async data-pjax src="/js/txmap.js"></script><script async src="//at.alicdn.com/t/c/font_4413217_rykn25v92ec.js"></script><canvas id="universe"></canvas><script defer src="/js/universe.js"></script><script defer src="/js/cursor.js"></script><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script defer data-pjax src="/js/cat.js"></script><script defer data-pjax src="/js/readPercent.js"></script><script defer data-pjax src="/js/emoji.js"></script><script defer type="text/javascript" src="https://cdn1.tianli0.top/npm/sweetalert2@8.19.0/dist/sweetalert2.all.js"></script><script defer src="/js/lunar.js"></script><script defer src="/js/day.js"></script><script async src="/js/fps.js"></script><script async src="/js/title.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjax')
+  btf.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.12.0"></script></div></div><!-- hexo injector body_end start --> <script data-pjax>if(document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    var parent = document.getElementById('recent-posts');
+    var child = '<div class="recent-post-item" style="width:100%;height: auto"><div id="catalog_magnet"><div class="magnet_item"><a class="magnet_link" href="https://www.xiaoshuzhi.love/categories/故事/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">📚 twigicerの小故事 (1)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><div class="magnet_item"><a class="magnet_link" href="https://www.xiaoshuzhi.love/categories/旅游日记/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">🎮 twigicerの旅游碎片 (3)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><div class="magnet_item"><a class="magnet_link" href="https://www.xiaoshuzhi.love/categories/学习笔记/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">📒 twigicerの学习笔记 (11)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><div class="magnet_item"><a class="magnet_link" href="https://www.xiaoshuzhi.love/categories/胡思乱想/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">💡 twigicerの胡思乱想 (2)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><a class="magnet_link_more"  href="https://www.xiaoshuzhi.love/categories" style="flex:1;text-align: center;margin-bottom: 10px;">查看更多...</a></div></div>';
+    console.log('已挂载magnet')
+    parent.insertAdjacentHTML("afterbegin",child)}
+     </script><style>#catalog_magnet{flex-wrap: wrap;display: flex;width:100%;justify-content:space-between;padding: 10px 10px 0 10px;align-content: flex-start;}.magnet_item{flex-basis: calc(50% - 5px);background: #f2f2f2;margin-bottom: 10px;border-radius: 8px;transition: all 0.2s ease-in-out;}.magnet_item:hover{background: #b30070}.magnet_link_more{color:#555}.magnet_link{color:black}.magnet_link:hover{color:white}@media screen and (max-width: 600px) {.magnet_item {flex-basis: 100%;}}.magnet_link_context{display:flex;padding: 10px;font-size:16px;transition: all 0.2s ease-in-out;}.magnet_link_context:hover{padding: 10px 20px;}</style>
+    <style></style><script data-pjax>
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(https://imgbed.xiaoshuzhi.xyz/imgs/cover/p2.png);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/学习笔记/&quot;);" href="javascript:void(0);">学习笔记</a><span class="categoryBar-list-count">11</span><span class="categoryBar-list-descr">故事</span></li><li class="categoryBar-list-item" style="background:url(https://imgbed.xiaoshuzhi.xyz/imgs/cover/p13.png);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/旅游日记/&quot;);" href="javascript:void(0);">旅游日记</a><span class="categoryBar-list-count">3</span><span class="categoryBar-list-descr">旅游日记</span></li><li class="categoryBar-list-item" style="background:url(https://imgbed.xiaoshuzhi.xyz/imgs/cover/p24.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/胡思乱想/&quot;);" href="javascript:void(0);">胡思乱想</a><span class="categoryBar-list-count">2</span><span class="categoryBar-list-descr">学习笔记</span></li><li class="categoryBar-list-item" style="background:url(https://imgbed.xiaoshuzhi.xyz/imgs/cover/p6.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/故事/&quot;);" href="javascript:void(0);">故事</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr">胡思乱想</span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v6.2.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.3.1" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://vercel.com/" style="margin-inline:5px" data-title="本站采用多线部署，主线路托管于Vercel" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Hosted-Vercel-brightgreen?style=flat&amp;logo=Vercel" alt=""/></a><a class="github-badge" target="_blank" href="https://dashboard.4everland.org/" style="margin-inline:5px" data-title="本站采用多线部署，备用线路托管于4EVERLAND" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Hosted-4EVERLAND-22DDDD?style=flat&amp;logo=IPFS" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime.js"></script><script data-pjax>
+  function butterfly_swiper_injector_config(){
+    var parent_div_git = document.getElementById('recent-posts');
+    var item_html = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms;"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2024/01/16/story-1/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p25.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-01-16</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2024/01/16/story-1/&quot;);" href="javascript:void(0);" alt="">爱上小树枝</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2024/01/16/story-1/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2024/01/31/study-8/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p16.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-01-31</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2024/01/31/study-8/&quot;);" href="javascript:void(0);" alt="">如何给自己的API提供SDK</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2024/01/31/study-8/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2024/01/30/study-7/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p10.png" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-01-30</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2024/01/30/study-7/&quot;);" href="javascript:void(0);" alt="">API签名认证的实现方案</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2024/01/30/study-7/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/10/05/trip-3/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p6.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-10-05</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/10/05/trip-3/&quot;);" href="javascript:void(0);" alt="">总有些美好值得奔赴</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/10/05/trip-3/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/08/08/trip-2/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p9.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-08-08</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/08/08/trip-2/&quot;);" href="javascript:void(0);" alt="">忙里偷闲-特种兵3日半游重庆成都</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/08/08/trip-2/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/07/20/study-5/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p11.png" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-07-20</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/07/20/study-5/&quot;);" href="javascript:void(0);" alt="">怎么分析设计高并发红包雨系统？</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/07/20/study-5/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2024/01/28/study-4/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p7.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-01-28</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2024/01/28/study-4/&quot;);" href="javascript:void(0);" alt="">如何解决Idea使用git push时连接不上服务器</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2024/01/28/study-4/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/04/13/trip-1/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p6.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-04-13</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/04/13/trip-1/&quot;);" href="javascript:void(0);" alt="">南京，江南，心念</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/04/13/trip-1/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/08/12/study-2/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p5.png" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-08-12</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/08/12/study-2/&quot;);" href="javascript:void(0);" alt="">Springboot3.x整合Swagger</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/08/12/study-2/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2024/01/24/study-6/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p18.png" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-01-24</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2024/01/24/study-6/&quot;);" href="javascript:void(0);" alt="">如何解决跨域问题</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2024/01/24/study-6/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/04/02/study-10/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p2.png" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-04-02</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/04/02/study-10/&quot;);" href="javascript:void(0);" alt="">虚拟机中用Docker安装并启动了Elasticsearch，浏览器却访问不了</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/04/02/study-10/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/08/16/study-3/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p26.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-08-16</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/08/16/study-3/&quot;);" href="javascript:void(0);" alt="">Springboot集成log4j，并基于disruptor实现异步日志</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/08/16/study-3/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/03/26/study-10/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p15.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-03-26</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/03/26/study-10/&quot;);" href="javascript:void(0);" alt="">Java字符串遍历时，toCharArray()方法与charAt()方法效率比较</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/03/26/study-10/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/07/29/study-1/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://imgbed.xiaoshuzhi.xyz/imgs/cover/p17.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-07-29</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/07/29/study-1/&quot;);" href="javascript:void(0);" alt="">Mybatis plus内置Mybatis-spring版本问题</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/07/29/study-1/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+    console.log('已挂载butterfly_swiper')
+    parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  var elist = 'undefined'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_swiper_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_swiper_injector_config();
+  }
+  </script><script defer src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.js"></script><script defer data-pjax src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper_init.js"></script><script async src="//at.alicdn.com/t/c/font_4413217_rykn25v92ec.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '2s');
+    arr[i].setAttribute('data-wow-delay', '1s');
+    arr[i].setAttribute('data-wow-offset', '100');
+    arr[i].setAttribute('data-wow-iteration', '2');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --></body></html>
