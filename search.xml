@@ -20,7 +20,7 @@
       
         <tags>
             
-            <tag> 分布式算法 </tag>
+            <tag> 分布式限流 </tag>
             
             <tag> Redisson RateLimiter </tag>
             
