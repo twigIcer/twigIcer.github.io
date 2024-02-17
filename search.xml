@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title></title>
+      <link href="/2024/02/17/clspvgj6b001fr0uf3gdx6b09/"/>
+      <url>/2024/02/17/clspvgj6b001fr0uf3gdx6b09/</url>
+      
+        <content type="html"><![CDATA[<h1 id="限流策略及实现方案"><a href="#限流策略及实现方案" class="headerlink" title="限流策略及实现方案"></a>限流策略及实现方案</h1><hr><p>title: 限流策略及实现方案<br>categories: 学习笔记<br>id: study-12<br>tags: 限流算法<br>sticky: 8</p><h2 id="swiper-index-8"><a href="#swiper-index-8" class="headerlink" title="swiper_index: 8"></a>swiper_index: 8</h2><p>如果我们的系统有调用别人的收费接口，那就需要考虑到接口有被恶意刷量的风险，如果不加以防护，会产生大量的费用。这个时候可以做一些限制，比如限制用户的总调用次数，或者限制用户单位时间内的调用次数，也就是限流。</p><p>限流的场景并不只有上面的一种，当用户某一时间的请求数过多，可能超过服务器的承受阈值时就需要考虑限流。比如电商网站在双十一或者618做的一些秒杀活动，参与人数众多，不可能在同一时间让所有用户请求都到达服务器，就需要限流，否则会导致服务器宕机。</p><h2 id="限流："><a href="#限流：" class="headerlink" title="限流："></a>限流：</h2><h3 id="简介："><a href="#简介：" class="headerlink" title="简介："></a>简介：</h3><p>限流：在计算机网络中，限流就是控制网络接口发送或接收请求的速率，它可防止DoS攻击和限制Web爬虫。也称流量控制。是指系统在面临高并发，或者大流量请求的情况下，限制新的请求对系统的访问，从而保证系统的稳定性。</p><h3 id="限流的阈值选择："><a href="#限流的阈值选择：" class="headerlink" title="限流的阈值选择："></a>限流的阈值选择：</h3><p>需要参考正常用户的访问频率，比如每秒每个用户只能访问一次。针对秒杀场景的限流则需要考虑服务器的承受阈值，本文不重点考虑这种情况。</p><h3 id="限流的分类："><a href="#限流的分类：" class="headerlink" title="限流的分类："></a>限流的分类：</h3><p>按限流的粒度分类：</p><ul><li>单机限流：指请求进入到某一个服务节点后超过了限流阈值，服务节点采取了一种限流保护措施。</li><li>分布式限流：狭义的说法是在接入层实现多节点合并限流，比如NGINX+redis，分布式网关等，广义的分布式限流是多个节点（可以为不同服务节点）有机整合，形成整体的限流服务。</li></ul><p>按限流策略分类（本文重点！！！）：</p><ul><li>固定窗口限流： 将一段时间内的流量限制为固定的数量或速率，例如每秒最多处理100个请求。</li><li>滑动窗口限流： 在一个滑动的时间窗口内，动态地调整限流速率，例如根据系统负载自适应地调整限流速率。</li><li>漏桶算法： 数据以固定的速率被放入一个固定容量的”漏桶”中，超出容量的部分将被丢弃或延迟处理。</li><li>令牌桶算法： 限制数据传输速率，允许突发流量，但在每个时间段内的平均速率是固定的。</li></ul><p>按照对象类型分类：</p><ul><li>基于请求限流：根据请求的数量或频率来限制访问的策略。</li><li>基于资源限流： 根据系统资源的使用情况来限制访问的策略。</li></ul><h2 id="四种限流策略（算法）："><a href="#四种限流策略（算法）：" class="headerlink" title="四种限流策略（算法）："></a>四种限流策略（算法）：</h2><p>参考文章：<a href="https://zhuanlan.zhihu.com/p/376564740">面试必备：4种经典限流算法讲解 - 知乎 (zhihu.com)</a></p><h3 id="1-固定窗口算法："><a href="#1-固定窗口算法：" class="headerlink" title="1. 固定窗口算法："></a><strong>1. 固定窗口算法</strong>：</h3><p>单位时间允许固定的用户请求，比如 每分钟只允许10次请求。</p><h4 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h4><ol><li><strong>时间窗口划分：</strong> 将时间划分为固定大小的窗口，例如将一分钟划分为 60 个 1 秒的窗口。</li><li><strong>计数器初始化：</strong> 每个窗口对应一个计数器，初始值为 0。</li><li><strong>请求处理：</strong> 每当有请求到来时，根据请求的时间戳确定该请求属于哪个时间窗口，然后将对应的计数器加一。</li><li><strong>限流判断：</strong> 在每个时间窗口结束时，检查对应的计数器值是否超过了限流阈值，如果超过了则拒绝后续的请求。</li></ol><h4 id="实现步骤："><a href="#实现步骤：" class="headerlink" title="实现步骤："></a>实现步骤：</h4><ol><li><strong>初始化计数器数组：</strong> 创建一个大小为窗口数量的计数器数组，用于存储每个时间窗口内的请求数量。</li><li><strong>请求到来时更新计数器：</strong> 每当有请求到来时，根据请求的时间戳确定所属的时间窗口，然后将对应窗口的计数器加一。</li><li><strong>定时重置计数器：</strong> 定时器在每个时间窗口结束时触发，将对应窗口的计数器清零，准备开始下一个时间窗口的计数。</li><li><strong>限流判断：</strong> 每当有请求到来时，都检查对应时间窗口的计数器值是否超过了限流阈值，如果超过了则拒绝请求。</li></ol><h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul><li>实现简单，容易理解。</li><li>精度高，能够比较准确地控制请求的通过速率。</li></ul><h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul><li><p><strong>存在流量突刺的问题：</strong>例如在一个时间窗口的开始时瞬间发生大量请求，可能导致该时间窗口内的请求量超过限流阈值。</p><p>比如：每分钟只允许10个用户访问，即单位时间为60s，阈值为10。</p><p>在0 - 59s里没有用户访问，在第59里突然来了10个请求，没超过限制，</p><p>60s结束，计数器刷新，在0 - 1s中又来了10个用户请求，也没超过限制，</p><p>但是在上轮的第59s 到本轮的1s 这2s内就有20个访问请求了，已经超过了服务器的承受阈值，可能导致服务器宕机。</p></li><li><p><strong>计数器的粒度不够细致，可能导致请求的不均匀分布。</strong></p></li></ul><h4 id="代码示例："><a href="#代码示例：" class="headerlink" title="代码示例："></a>代码示例：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 固定窗口时间算法</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">fixedWindowsTryAcquire</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">currentTime</span> <span class="operator">=</span> System.currentTimeMillis();  <span class="comment">//获取系统当前时间</span></span><br><span class="line">    <span class="keyword">if</span> (currentTime - lastRequestTime &gt; windowUnit) &#123;  <span class="comment">//检查是否在时间窗口内</span></span><br><span class="line">        counter = <span class="number">0</span>;  <span class="comment">// 计数器清0</span></span><br><span class="line">        lastRequestTime = currentTime;  <span class="comment">//开启新的时间窗口</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (counter &lt; threshold) &#123;  <span class="comment">// 小于阀值</span></span><br><span class="line">        counter++;  <span class="comment">//计数器加1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="2-滑动窗口算法："><a href="#2-滑动窗口算法：" class="headerlink" title="2. 滑动窗口算法："></a><strong>2. 滑动窗口算法</strong>：</h3><p>还是单位时间允许固定的用户请求，但是这个单位时间是滚动的：</p><p>比如每2min 允许10次请求，每1分钟窗口滑动一次，即单位时间为2min，阈值为10，滑动时间为1min.</p><p> 10:00 开始，10:00 - 10:02算一个单位时间，10:01 - 10:03又算一个单位时间。</p><p><img src="https://cdn.jsdelivr.net/gh/twigIcer/markdown-img@main/imgs/image-20240217163132411.png" alt="image-20240217163132411"></p><p>一定程度上解决了固定窗口算法流量突刺的问题，但是没有完全解决，和滑动时间有关。</p><h4 id="原理：-1"><a href="#原理：-1" class="headerlink" title="原理："></a>原理：</h4><ol><li><strong>时间窗口划分：</strong> 将整个时间窗口划分为多个小的时间片段（例如1秒），每个时间片段内维护一个计数器。</li><li><strong>请求处理：</strong> 每当有请求到来时，根据请求的时间戳确定该请求属于哪个时间片段，并将对应的计数器加一。</li><li><strong>计数器滑动：</strong> 定时器定期触发，将计数器数组向前滑动一个时间片段，同时清零最后一个时间片段的计数器。</li><li><strong>限流判断：</strong> 每当有请求到来时，都检查对应时间片段的计数器值是否超过了限流阈值，如果超过了则拒绝请求。</li></ol><h4 id="实现步骤：-1"><a href="#实现步骤：-1" class="headerlink" title="实现步骤："></a>实现步骤：</h4><ol><li><strong>初始化计数器数组：</strong> 创建一个大小为时间窗口内时间片段数的计数器数组，用于存储每个时间片段内的请求数量。</li><li><strong>请求到来时更新计数器：</strong> 每当有请求到来时，根据请求的时间戳确定所属的时间片段，然后将对应时间片段的计数器加一。</li><li><strong>定时滑动计数器：</strong> 定时器在每个时间片段结束时触发，将计数器数组向前滑动一个时间片段，同时清零最后一个时间片段的计数器。</li><li><strong>限流判断：</strong> 每当有请求到来时，都检查对应时间片段的计数器值是否超过了限流阈值，如果超过了则拒绝请求。</li></ol><h4 id="优点：-1"><a href="#优点：-1" class="headerlink" title="优点："></a><strong>优点：</strong></h4><ul><li>更平滑地控制请求通过速率，减少了固定窗口算法中可能出现的突发请求问题。</li><li>精度较高，对于请求的限流更为细致。</li></ul><h4 id="缺点：-1"><a href="#缺点：-1" class="headerlink" title="缺点："></a>缺点：</h4><ul><li>实现相对复杂，需要维护计数器数组的滑动。</li><li>并没有完全解决流量突刺问题，滑动时间越小，效果越好，但是往往很难找到合适的滑动时间。</li></ul><h4 id="代码实现："><a href="#代码实现：" class="headerlink" title="代码实现："></a>代码实现：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 单位时间划分的小周期（单位时间是1分钟，10s一个小格子窗口，一共6个格子）</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">int</span> <span class="variable">SUB_CYCLE</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 每分钟限流请求数</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">int</span> <span class="variable">thresholdPerMin</span> <span class="operator">=</span> <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 计数器, k-为当前窗口的开始时间值秒，value为当前窗口的计数</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> TreeMap&lt;Long, Integer&gt; counters = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 滑动窗口时间算法实现</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="type">boolean</span> <span class="title function_">slidingWindowsTryAcquire</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="type">long</span> <span class="variable">currentWindowTime</span> <span class="operator">=</span> LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / SUB_CYCLE * SUB_CYCLE; <span class="comment">//获取当前时间在哪个小周期窗口</span></span><br><span class="line">       <span class="type">int</span> <span class="variable">currentWindowNum</span> <span class="operator">=</span> countCurrentWindow(currentWindowTime); <span class="comment">//当前窗口总请求数</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">//超过阀值限流</span></span><br><span class="line">       <span class="keyword">if</span> (currentWindowNum &gt;= thresholdPerMin) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//计数器+1</span></span><br><span class="line">       counters.get(currentWindowTime)++;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 统计当前窗口的请求数</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">int</span> <span class="title function_">countCurrentWindow</span><span class="params">(<span class="type">long</span> currentWindowTime)</span> &#123;</span><br><span class="line">       <span class="comment">//计算窗口开始位置</span></span><br><span class="line">       <span class="type">long</span> <span class="variable">startTime</span> <span class="operator">=</span> currentWindowTime - SUB_CYCLE* (60s/SUB_CYCLE-<span class="number">1</span>);</span><br><span class="line">       <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//遍历存储的计数器</span></span><br><span class="line">       Iterator&lt;Map.Entry&lt;Long, Integer&gt;&gt; iterator = counters.entrySet().iterator();</span><br><span class="line">       <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">           Map.Entry&lt;Long, Integer&gt; entry = iterator.next();</span><br><span class="line">           <span class="comment">// 删除无效过期的子窗口计数器</span></span><br><span class="line">           <span class="keyword">if</span> (entry.getKey() &lt; startTime) &#123;</span><br><span class="line">               iterator.remove();</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               <span class="comment">//累加当前窗口的所有计数器之和</span></span><br><span class="line">               count =count + entry.getValue();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> count;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure><h3 id="3-漏桶算法："><a href="#3-漏桶算法：" class="headerlink" title="3. 漏桶算法："></a><strong>3. 漏桶算法</strong>：</h3><p>以<strong>固定的速率</strong>处理请求，当请求桶满后，拒绝请求。</p><p>模拟了一个水桶，水（请求）以固定的速率漏出（处理请求），但如果桶已满，则溢出的水会被丢弃。</p><p>比如，1s内处理10个请求，桶的容量为10，每0.1s固定处理1个请求。</p><p>如果1s内来了10个请求，都可以处理完。</p><p>如果1s内来了11个请求，第11个请求溢出，被拒绝。</p><h4 id="原理：-2"><a href="#原理：-2" class="headerlink" title="原理："></a>原理：</h4><ol><li><strong>桶容量限制：</strong> 漏桶有一个固定的容量，表示系统可以处理的最大请求数量。当桶已满时，多余的请求将被丢弃。</li><li><strong>固定流出速率：</strong> 漏桶以固定的速率处理请求，即使瞬时的请求数量超过了系统的处理能力，也只会以固定的速率进行处理。</li><li><strong>请求处理：</strong> 每当有请求到来时，都会向漏桶中加入一个请求。如果漏桶未满，则请求立即被处理；如果漏桶已满，则请求被丢弃。</li><li><strong>流出控制：</strong> 漏桶以固定的速率处理请求，无论实际请求数量多少，都会以固定速率向外输出请求。这种方式可以平滑网络流量，防止突发流量对系统造成冲击。</li></ol><h4 id="实现步骤：-2"><a href="#实现步骤：-2" class="headerlink" title="实现步骤："></a>实现步骤：</h4><ol><li><strong>初始化漏桶参数：</strong> 包括桶的容量和固定的流出速率。</li><li><strong>请求处理：</strong> 每当有请求到来时，检查漏桶是否已满，如果未满，则向漏桶中加入一个请求；如果已满，则拒绝请求。</li><li><strong>流出控制：</strong> 使用定时器定期从漏桶中流出一个请求，以固定的速率进行处理。</li></ol><h4 id="优点：-2"><a href="#优点：-2" class="headerlink" title="优点："></a>优点：</h4><ul><li>简单有效，易于实现。</li><li>能一定程度上避免流量突刺。</li><li>能够平滑控制请求的处理速率，避免系统因突发请求而崩溃。</li></ul><h4 id="缺点：-2"><a href="#缺点：-2" class="headerlink" title="缺点："></a>缺点：</h4><ul><li>对于突发流量处理能力有限，可能造成一些请求的延迟或丢失。</li><li>如果流量持续超出桶的容量，可能导致请求被频繁丢弃，影响用户体验。</li></ul><h4 id="代码实现：-1"><a href="#代码实现：-1" class="headerlink" title="代码实现："></a>代码实现：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 每秒处理数（出水率）</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">long</span> rate;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *  当前剩余水量</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">long</span> currentWater;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 最后刷新时间</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">long</span> refreshTime;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 桶容量</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">long</span> capacity;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 漏桶算法</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="type">boolean</span> <span class="title function_">leakybucketLimitTryAcquire</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="type">long</span> <span class="variable">currentTime</span> <span class="operator">=</span> System.currentTimeMillis();  <span class="comment">//获取系统当前时间</span></span><br><span class="line">       <span class="type">long</span> <span class="variable">outWater</span> <span class="operator">=</span> (currentTime - refreshTime) / <span class="number">1000</span> * rate; <span class="comment">//流出的水量 =(当前时间-上次刷新时间)* 出水率</span></span><br><span class="line">       <span class="type">long</span> <span class="variable">currentWater</span> <span class="operator">=</span> Math.max(<span class="number">0</span>, currentWater - outWater); <span class="comment">// 当前水量 = 之前的桶内水量-流出的水量</span></span><br><span class="line">       refreshTime = currentTime; <span class="comment">// 刷新时间</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">// 当前剩余水量还是小于桶的容量，则请求放行</span></span><br><span class="line">       <span class="keyword">if</span> (currentWater &lt; capacity) &#123;</span><br><span class="line">           currentWater++;</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">       <span class="comment">// 当前剩余水量大于等于桶的容量，限流</span></span><br><span class="line">       <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure><h3 id="4-令牌桶算法："><a href="#4-令牌桶算法：" class="headerlink" title="4. 令牌桶算法："></a><strong>4. 令牌桶算法</strong>：</h3><p>有一个令牌管理员，根据限流大小，定速往令牌桶里放令牌。当桶里的令牌满了，就丢弃令牌。</p><p>每个请求拿一个令牌，只要能拿到令牌就可以执行请求，执行请求时将该令牌销毁；</p><p>如果有多个请求同时拿到令牌，就可以并发执行这些请求，并销毁他们的令牌；</p><p>如果请求拿不到令牌，就被拒绝。</p><h4 id="原理：-3"><a href="#原理：-3" class="headerlink" title="原理："></a>原理：</h4><ol><li><strong>令牌桶：</strong> 令牌桶中存放着一定数量的令牌，这些令牌以固定的速率被添加到桶中。</li><li><strong>请求处理：</strong> 当请求到达时，如果桶中有足够的令牌，则可以被处理；否则，请求被暂时缓存或直接丢弃。</li><li><strong>令牌生成速率：</strong> 令牌以固定速率被添加到令牌桶中，保持桶中令牌数量的稳定。</li><li><strong>请求消耗令牌：</strong> 每当有请求到达时，桶中的令牌数量会相应减少，表示该请求已经被处理。</li></ol><h4 id="实现步骤：-3"><a href="#实现步骤：-3" class="headerlink" title="实现步骤："></a>实现步骤：</h4><ol><li><strong>初始化令牌桶参数：</strong> 包括桶的容量和固定的生成速率。</li><li><strong>令牌生成：</strong> 使用定时器以固定速率向桶中添加令牌。</li><li><strong>请求处理：</strong> 每当有请求到来时，检查桶中是否有足够的令牌。如果有，则处理请求并消耗相应的令牌；如果没有，则根据策略处理请求（等待或丢弃）。</li></ol><h4 id="优点：-3"><a href="#优点：-3" class="headerlink" title="优点："></a>优点：</h4><ul><li><p>可以并发的执行请求，提高效率。</p></li><li><p>能够平滑控制请求的处理速率，避免系统因突发请求而崩溃。</p></li></ul><h4 id="缺点：-3"><a href="#缺点：-3" class="headerlink" title="缺点："></a>缺点：</h4><ul><li><p>如果流量超过桶的容量，可能会导致一些请求被丢弃或延迟处理。</p><p>比如桶容量是10，每分钟生成并向桶中投放10个令牌，</p><p>可能在前10秒内桶里的令牌就被拿完了，</p><p>后面50秒内的请求就会被拒绝或者等到下一分钟重新生成令牌。</p></li><li><p>需要额外的定时器来定期生成令牌，增加了系统复杂性。</p></li></ul><h4 id="代码实现：-2"><a href="#代码实现：-2" class="headerlink" title="代码实现："></a>代码实现：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 每秒处理数（放入令牌数量）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> putTokenRate;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 最后刷新时间</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> refreshTime;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 令牌桶容量</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> capacity;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当前桶内令牌数</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> <span class="variable">currentToken</span> <span class="operator">=</span> <span class="number">0L</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 漏桶算法</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="type">boolean</span> <span class="title function_">tokenBucketTryAcquire</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="type">long</span> <span class="variable">currentTime</span> <span class="operator">=</span> System.currentTimeMillis();  <span class="comment">//获取系统当前时间</span></span><br><span class="line">      <span class="type">long</span> <span class="variable">generateToken</span> <span class="operator">=</span> (currentTime - refreshTime) / <span class="number">1000</span> * putTokenRate; <span class="comment">//生成的令牌 =(当前时间-上次刷新时间)* 放入令牌的速率</span></span><br><span class="line">      currentToken = Math.min(capacity, generateToken + currentToken); <span class="comment">// 当前令牌数量 = 之前的桶内令牌数量+放入的令牌数量</span></span><br><span class="line">      refreshTime = currentTime; <span class="comment">// 刷新时间</span></span><br><span class="line">      </span><br><span class="line">      <span class="comment">//桶里面还有令牌，请求正常处理</span></span><br><span class="line">      <span class="keyword">if</span> (currentToken &gt; <span class="number">0</span>) &#123;</span><br><span class="line">          currentToken--; <span class="comment">//令牌数量-1</span></span><br><span class="line">          <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><h2 id="限流的实现："><a href="#限流的实现：" class="headerlink" title="限流的实现："></a>限流的实现：</h2><h3 id="单机限流："><a href="#单机限流：" class="headerlink" title="单机限流："></a>单机限流：</h3><h4 id="1-Guava-RateLimiter-推荐"><a href="#1-Guava-RateLimiter-推荐" class="headerlink" title="1. Guava RateLimiter(推荐):"></a>1. Guava RateLimiter(推荐):</h4><p>参考文档：</p><p><a href="http://ifeve.com/guava-ratelimiter/">Guava官方文档-RateLimiter类 | 并发编程网 – ifeve.com</a></p><p><a href="https://zhuanlan.zhihu.com/p/205266820">谷歌Guava限流工具RateLimiter - 知乎 (zhihu.com)</a></p><p>Guava RateLimiter是Google Guava库中提供的一种工具，用于实现令牌桶算法进行限流。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.common.util.concurrent.RateLimiter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="comment">// 创建一个每秒最多处理10个请求的RateLimiter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">RateLimiter</span> <span class="variable">rateLimiter</span> <span class="operator">=</span> RateLimiter.create(<span class="number">10.0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">myMethod</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (rateLimiter.tryAcquire()) &#123;</span><br><span class="line">            <span class="comment">// 可以处理请求的逻辑</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Request processed successfully&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 请求被限流，处理限流逻辑</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Request rate limited&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><code>RateLimiter.create(10.0)</code>创建了一个每秒最多处理10个请求的RateLimiter实例。<code>tryAcquire()</code>方法尝试获取一个许可，如果获取成功则返回<code>true</code>，表示可以处理请求；如果获取失败则返回<code>false</code>，表示请求被限流。</p><p>Guava RateLimiter还提供了其他方法，如<code>acquire()</code>用于获取许可，如果没有许可则会阻塞直到获取到许可为止；<code>tryAcquire(long timeout, TimeUnit unit)</code>用于在一定时间内尝试获取许可，如果超过指定时间仍未获取到许可则返回<code>false</code>。</p><h4 id="2-Bucket4j"><a href="#2-Bucket4j" class="headerlink" title="2. Bucket4j:"></a>2. Bucket4j:</h4><p>Bucket4j是一个用于实现令牌桶算法的Java库，同样使用了令牌桶算法进行限流。</p><p>官方仓库：<a href="https://github.com/bucket4j/bucket4j">bucket4j/bucket4j: Java rate limiting library based on token-bucket algorithm. (github.com)</a></p><p>官方文档：<a href="https://bucket4j.com/">Current version 8.8.0 documentation (bucket4j.com)</a></p><p>参考文章：<a href="https://zhuanlan.zhihu.com/p/491073656">如何在 Java 中通过 Bucket4j 提供速率限制 - 知乎 (zhihu.com)</a></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.github.bucket4j.Bandwidth;</span><br><span class="line"><span class="keyword">import</span> io.github.bucket4j.Bucket;</span><br><span class="line"><span class="keyword">import</span> io.github.bucket4j.ConsumptionProbe;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="comment">// 创建一个每秒最多处理10个请求的Bucket</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Bucket</span> <span class="variable">bucket</span> <span class="operator">=</span> Bucket4j.builder()</span><br><span class="line">            .addLimit(Bandwidth.classic(<span class="number">10</span>, Duration.ofSeconds(<span class="number">1</span>)))</span><br><span class="line">            .build();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">myMethod</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 尝试消耗一个令牌</span></span><br><span class="line">        <span class="type">ConsumptionProbe</span> <span class="variable">probe</span> <span class="operator">=</span> bucket.tryConsumeAndReturnRemaining(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (probe.isConsumed()) &#123;</span><br><span class="line">            <span class="comment">// 可以处理请求的逻辑</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Request processed successfully&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 请求被限流，处理限流逻辑</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Request rate limited. Time to wait: &quot;</span> + probe.getNanosToWaitForRefill());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><code>Bucket4j.builder()</code>用于创建一个Bucket的构建器，然后使用<code>addLimit()</code>方法设置限流策略，这里使用了<code>Bandwidth.classic(10, Duration.ofSeconds(1))</code>表示每秒最多处理10个请求。使用<code>tryConsumeAndReturnRemaining(1)</code>方法尝试消耗一个令牌，如果成功消耗则返回一个ConsumptionProbe对象，可以通过该对象判断是否成功消耗以及获取剩余的令牌数。</p><h3 id="分布式限流："><a href="#分布式限流：" class="headerlink" title="分布式限流："></a>分布式限流：</h3><p>有两种思路：</p><p>1）将所有用户访问频率等数据集中存储进行统计，比如使用<code>redis</code>存储，无论用户的请求落到了哪个服务器上，都以集中存储的数据为准。</p><p>2）在网关层面进行限流操作和统计，比如Sentinel、Gateway。</p><h4 id="1-Redisson-RateLimiter"><a href="#1-Redisson-RateLimiter" class="headerlink" title="1. Redisson RateLimiter:"></a>1. Redisson RateLimiter:</h4><p>Redisson RateLimiter是用于分布式限流的一个组件，它基于令牌桶算法，允许你控制在分布式环境中的请求速率。</p><p>参考文档：</p><p><a href="https://redisson.org/glossary/rate-limiter.html">What is a Rate Limiter? | Redisson</a></p><p><a href="https://juejin.cn/post/7203364379339931708">Redisson限流器RRateLimiter使用及源码分析 - 掘金 (juejin.cn)</a></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.redisson.Redisson;</span><br><span class="line"><span class="keyword">import</span> org.redisson.api.RRateLimiter;</span><br><span class="line"><span class="keyword">import</span> org.redisson.api.RateIntervalUnit;</span><br><span class="line"><span class="keyword">import</span> org.redisson.api.RedissonClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建Redisson客户端连接</span></span><br><span class="line">        <span class="type">RedissonClient</span> <span class="variable">redisson</span> <span class="operator">=</span> Redisson.create();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建RateLimiter，每秒产生10个令牌</span></span><br><span class="line">        <span class="type">RRateLimiter</span> <span class="variable">rateLimiter</span> <span class="operator">=</span> redisson.getRateLimiter(<span class="string">&quot;myRateLimiter&quot;</span>);</span><br><span class="line">        rateLimiter.trySetRate(RateIntervalUnit.SECONDS, <span class="number">10</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 在业务代码中使用RateLimiter进行限流</span></span><br><span class="line">        <span class="keyword">if</span> (rateLimiter.tryAcquire()) &#123;</span><br><span class="line">            <span class="comment">// 处理请求的逻辑</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Request processed successfully&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 请求被限流，处理限流逻辑</span></span><br><span class="line">            System.out.println(<span class="string">&quot;Request rate limited&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭Redisson客户端连接</span></span><br><span class="line">        redisson.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>首先创建了一个Redisson客户端连接，然后通过<code>getRateLimiter</code>方法获取一个分布式限流器实例，设置了每秒产生10个令牌的速率。在业务代码中，通过<code>tryAcquire</code>方法尝试获取一个令牌，如果成功获取则继续处理请求，否则执行限流逻辑。</p><p>注意，上述示例中使用了<code>tryAcquire</code>方法，该方法是非阻塞的。如果需要阻塞等待直到获取到令牌，可以使用<code>acquire</code>方法。</p><h4 id="2-Sentinel"><a href="#2-Sentinel" class="headerlink" title="2. Sentinel:"></a>2. Sentinel:</h4><p>Sentinel是由阿里巴巴开源的分布式系统的流量防卫士。它主要用于实时监控分布式系统的各个节点的健康状况，以及处理各种因节点故障或网络故障引起的异常情况。可以用来做分布式限流，基于流量的 QPS 进行限流。</p><p>参考文章：</p><p><a href="https://zhuanlan.zhihu.com/p/363438722">超详细的Sentinel入门 - 知乎 (zhihu.com)</a></p><p><a href="https://springdoc.cn/java-sentinel-intro/">Alibaba Sentinel 简介 - spring 中文网 (springdoc.cn)</a></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.csp.sentinel.SphU;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.csp.sentinel.slots.block.BlockException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">myMethod</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 定义资源名称为&quot;myResource&quot;</span></span><br><span class="line">            SphU.entry(<span class="string">&quot;myResource&quot;</span>);</span><br><span class="line">            <span class="comment">// 处理请求的逻辑</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (BlockException ex) &#123;</span><br><span class="line">            <span class="comment">// 请求被限流，处理限流逻辑</span></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">// 释放资源</span></span><br><span class="line">            SphU.exit();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h2><p>常用的限流算法有四种：固定窗口算法、滑动窗口算法、漏桶算法和令牌桶算法，不管哪种算法都需要考虑单位时间即阈值的问题，比较常用的就是令牌桶算法，但是的限流方案还需要结合实际项目去设计。</p><p>单机限流可以用Guava RateLimiter实现，分布式限流可以使用Redisson RateLimiter实现。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>如何解决Twikoo跨域问题</title>
       <link href="/2024/02/16/study-11/"/>
       <url>/2024/02/16/study-11/</url>
@@ -17,6 +30,14 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> 跨域 </tag>
+            
+            <tag> Twikoo </tag>
+            
+        </tags>
       
     </entry>
     
@@ -37,6 +58,12 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> SDK </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -55,6 +82,12 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> API签名认证 </tag>
+            
+        </tags>
       
     </entry>
     
@@ -75,6 +108,12 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> Git </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -93,6 +132,12 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> 跨域 </tag>
+            
+        </tags>
       
     </entry>
     
@@ -132,6 +177,12 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> 爱上小树枝 </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -150,6 +201,14 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> 旅游 </tag>
+            
+            <tag> 上海 </tag>
+            
+        </tags>
       
     </entry>
     
@@ -170,6 +229,16 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> springboot </tag>
+            
+            <tag> disruptor </tag>
+            
+            <tag> 异步日志 </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -188,6 +257,14 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> Swagger </tag>
+            
+            <tag> springboot </tag>
+            
+        </tags>
       
     </entry>
     
@@ -208,6 +285,16 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> 旅游 </tag>
+            
+            <tag> 重庆 </tag>
+            
+            <tag> 成都 </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -226,6 +313,12 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> Mybatis plus </tag>
+            
+        </tags>
       
     </entry>
     
@@ -246,6 +339,12 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> 红包雨系统 </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -264,6 +363,12 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> 高等教育 </tag>
+            
+        </tags>
       
     </entry>
     
@@ -284,6 +389,16 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> 南京 </tag>
+            
+            <tag> 苏州 </tag>
+            
+            <tag> 旅游 </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -303,6 +418,14 @@
       </categories>
       
       
+        <tags>
+            
+            <tag> docker </tag>
+            
+            <tag> Elasticsearch </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -321,6 +444,14 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 字符串遍历 </tag>
+            
+        </tags>
       
     </entry>
     
